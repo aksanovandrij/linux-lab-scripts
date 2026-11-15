@@ -27,6 +27,7 @@ pipeline {
                 docker {
                     image 'fedora:latest'
                     args '-u root'
+                    reuseNode true
                 }
             }
             steps {
@@ -49,6 +50,7 @@ pipeline {
                 docker {
                     image 'ubuntu:latest'
                     args '-u root'
+                    reuseNode true
                 }
             }
             steps {
@@ -70,6 +72,7 @@ pipeline {
                 docker {
                     image 'oraclelinux:8'
                     args '-u root'
+                    reuseNode true
                 }
             }
             steps {
@@ -86,6 +89,7 @@ pipeline {
                 docker {
                     image 'ubuntu:latest'
                     args '-u root'
+                    reuseNode true
                 }
             }
             steps {
