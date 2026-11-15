@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  jenkins-master:
+    build: ./jenkins/master
+    container_name: jenkins-master
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    # environment:
+    # ВИДАЛЕНО JAVA_OPTS=-Dj..., адже з ним на localhost:8080
+    # ніякого початкового паролю не буде!
+    # - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+
+    networks:
+      - jenkins-net
+
+  jenkins-agent:
+    build: ./jenkins/agent
+    container_name: jenkins-agent
+    depends_on:
+      - jenkins-master
+    environment:
+      # ДОДАНО JENKINS_SECRET, адже без секрету:
+      # agent буде Exit 0 у docker-compose ps бо master його не впустить!
+      # docker-compose logs jenkins-agent пише "Secret is required for inbound agents"
+      - JENKINS_URL=http://jenkins-master:8080
+      - JENKINS_SECRET=${JENKINS_SECRET}
+      - JENKINS_AGENT_NAME=agent-1
+    networks:
+      - jenkins-net
+
+volumes:
+  jenkins_home:
+
+networks:
+  jenkins-net:
+    driver: bridge
