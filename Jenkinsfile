@@ -110,7 +110,7 @@ pipeline {
         failure {
             echo 'Build failed!'
         }
-        always {
+        cleanup {
             cleanWs()
         }
     }
