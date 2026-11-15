@@ -10,12 +10,10 @@ services:
     volumes:
       - jenkins_home:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
-
     # environment:
     # ВИДАЛЕНО JAVA_OPTS=-Dj..., адже з ним на localhost:8080
     # ніякого початкового паролю не буде!
     # - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
-
     networks:
       - jenkins-net
 
@@ -24,6 +22,13 @@ services:
     container_name: jenkins-agent
     depends_on:
       - jenkins-master
+    volumes:
+      # ДОДАНО сокет докера до агента, адже він потрібен при Jenkins Build!
+      - /var/run/docker.sock:/var/run/docker.sock
+    group_add:
+      # ДОДАНО групу 110 (власник /var/run/docker.sock на віртуалці)
+      # інашке permission denied while trying to connect to the docker API at unix:///var/run/docker.sock! 
+      - "110"
     environment:
       # ДОДАНО JENKINS_SECRET, адже без секрету:
       # agent буде Exit 0 у docker-compose ps бо master його не впустить!
